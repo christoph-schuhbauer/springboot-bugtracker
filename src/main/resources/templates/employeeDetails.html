@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: real_head">
+
+</head>
+<body>
+
+    <nav th:replace="fragments :: navbar(${employees}, ${allProjects})"></nav>
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col mm-25 my-1 card shadow">
+                <p><h3>Employee Information</h3></p>
+                <div style="border-bottom: rgb(33,255,177) 2px solid; margin-bottom: 10px;"></div>
+                <div class="form-group">
+                    <input type="hidden" th:field="${employee.id}">
+                    <label class="control-label col" for="lastname">Lastname</label>
+                    <input readonly id="lastname" name="thename" class="form-control mb-3" type="text" th:field="${employee.lastName}" placeholder="Name *">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col" for="firstname">Firstname</label>
+                    <input readonly id="firstname" name="thename" class="form-control mb-3" type="text" th:field="${employee.firstName}" placeholder="Name *">
+                </div>
+                <div class="form-group">
+                    <label class="control-label col" for="role">Username</label>
+                    <input readonly id="role" name="role" class="form-control mb-3" type="text" th:value="${employee.user.getUserName()}" placeholder="Name *">
+                </div>
+                <div class="form-group">
+                    <label class="control-label col" for="email">Email</label>
+                    <input readonly id="email" name="email" class="form-control mb-3" type="text" th:value="${employee.email}" placeholder="Name *">
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row">
+                            <div class="col mm-25 my-1 card shadow" style="height: 30vh;">
+                                <h2>Status Chart</h2>
+                                <div>
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mm-25 my-1 card shadow" style="height: 60vh; overflow: auto;">
+                                <div><h4>Project(s)</h4></div>
+                                <div style="border-bottom: rgb(33,255,177) 2px solid; margin-bottom: 10px; margin-top: 4px;"></div>
+                                <table class="table table-bordered table-striped align-middle">
+                                    <thead class="table-light">
+                                    <th>name</th>
+                                    <th>options</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="tempProject : ${projectsByEmployeeId}">
+                                        <td th:text="${tempProject.getTitle()}"></td>
+                                        <td>
+                                            <a th:href="@{/projectDetails(projectId=${tempProject.Id})}" class="btn btn-outline-dark">View Project</a>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col mm-25 my-1 card shadow" style="height: 30vh;">
+                                <h2>Priority Chart</h2>
+                                <div>
+                                    <canvas id="myChart2"></canvas>
+                                </div>
+                            </div>
+                            <div class="col mm-25 my-1 card shadow" style="height: 30vh;">
+                                <h2>Type Chart</h2>
+                                <div>
+                                    <canvas id="myChart3"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mm-25 my-1 card shadow" style="height: 60vh; overflow: auto;">
+                                <div><h4>Ticket(s)</h4></div>
+                                <div style="border-bottom: rgb(33,255,177) 2px solid; margin-bottom: 10px; margin-top: 4px;"></div>
+                                <table class="table table-bordered table-striped align-middle">
+                                    <thead class="table-light">
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Date of Creation</th>
+                                    <th>Status</th>
+                                    <th>options</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="tempTicket : ${ticketsByEmployeeId}">
+                                        <td th:text="${tempTicket.getName()}"></td>
+                                        <td th:text="${tempTicket.getType()}"></td>
+                                        <td th:text="${tempTicket.getPriority()}"></td>
+                                        <td th:text="${#dates.format(tempTicket.getCreationTimestamp(), 'dd-MM-yyyy / HH:mm')   }"></td>
+                                        <td th:text="${tempTicket.getStatus()}"></td>
+                                        <td>
+                                            <a th:href="@{/tickets/update(ticketId=${tempTicket.Id})}" class="btn btn-outline-dark">View Ticket</a>
+                                            <a th:href="@{/tickets/delete(ticketId=${tempTicket.Id})}" class="btn btn-outline-danger">Delete Ticket</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div th:replace="fragments :: chartscript(${data_status}, ${data_priority}, ${data_type})"></div>
+
+
+
+
+
+</body>
+
+</html>

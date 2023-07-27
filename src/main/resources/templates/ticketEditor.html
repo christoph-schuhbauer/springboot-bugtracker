@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: real_head">
+<body>
+
+
+    <nav th:replace="fragments :: navbar(${employees}, ${projects})"></nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-4 mm-25 my-1 card shadow">
+                <div style="margin: 10px 10px;">
+                    <h3>Ticket Editor</h3>
+                    <div style="border-bottom: rgb(33,255,177) 2px solid; margin-bottom: 15px;"></div>
+                    <p th:text="'created on: ' + (${#dates.format(ticket.creationTimestamp, 'dd-MM-yyyy / HH:mm')}?: '----------')"></p>
+                </div>
+
+                <div class="container contact-form">
+
+
+                    <form action="#" th:action="@{/tickets/save}"
+                          th:object="${ticket}" method="POST">
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <input type="hidden" th:field="${ticket.id}">
+                                    <label class="control-label col-sm-2" for="name">Name</label>
+                                    <input id="name" name="thename" class="form-control mb-3" type="text" th:field="${ticket.name}" placeholder="Name *">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="type">Type</label>
+                                    <select class="form-control mb-3" id="type" name="ticket_type" th:field="${ticket.type}">
+                                        <option  th:value="bug" th:text="bug" th:selected="${ticket.getType()}=='bug'"></option>
+                                        <option  th:value="feature" th:text="feature" th:selected="${ticket.getType()}=='feature'"></option>
+                                    </select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="priority">Priority</label>
+
+                                    <select class="form-control mb-3" id="priority" name="ticket_priority" th:field="${ticket.priority}">
+                                        <option  th:value="high" th:text="high" th:selected="${ticket.getStatus()}=='high'"></option>
+                                        <option  th:value="mid" th:text="mid" th:selected="${ticket.getStatus()}=='mid'"></option>
+                                        <option  th:value="low" th:text="low" th:selected="${ticket.getStatus()}=='low'"></option>
+                                    </select>
+
+
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="status">Status</label>
+                                    <select class="form-control mb-3" id="status" name="ticket_status" th:field="${ticket.status}">
+                                        <option  th:value="waiting" th:text="waiting" th:selected="${ticket.getStatus()}=='waiting'"></option>
+                                        <option  th:value="closed" th:text="closed" th:selected="${ticket.getStatus()}=='closed'"></option>
+                                        <option  th:value="active" th:text="active" th:selected="${ticket.getStatus()}=='active'"></option>
+                                    </select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="employee">Employee</label>
+                                    <select class="form-control mb-3" id="employee" name="employee_id">
+                                        <option th:each="temp : ${employees}" th:value="${temp.getId()}" th:text="${temp.getLastName()}" th:selected="${temp.getId()}==${ticket.getEmployee()?.getId()}"></option>
+                                        <option th:value=0 th:text="None" th:selected="${ticket.getEmployee()?.getId()}==null"></option>
+                                    </select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="project">Project</label>
+                                    <select class="form-control mb-3" id="project" name="project_id">
+                                        <option th:each="tempP : ${projects}" th:value="${tempP.getId()}" th:text="${tempP.getTitle()}" th:selected="${tempP.getId()}==${ticket.getProject()?.getId()}"></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="description">Description</label>
+                                    <textarea id="description" th:field="${ticket.description}" class="form-control mb-3" placeholder="Description *" style="width: 100%; height: 200px;"></textarea>
+                                </div>
+                                <div class="form-group m-2">
+                                    <input type="submit" name="btnSubmit" class="btn btn-dark btnContact" value="Save Ticket" />
+                                    <a th:href="@{/tickets/delete(ticketId=${ticket.Id})}" class="btn btn-outline-danger">Delete Ticket</a>
+                                    <a class="btn btn-outline-dark" onclick="history.go(-1)"><span
+                                            class="text">Go Back</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-4 mm-25 my-1 card shadow">
+                <div style="margin: 10px 10px;">
+                    <h3>Ticket History</h3>
+                    <div style="border-bottom: rgb(33,255,177) 2px solid; margin-bottom: 15px;"></div>
+                </div>
+
+                <table class="table table-bordered table-striped rounded rounded-3 overflow-hidden align-middle " style="margin: 10px 10px;">
+                    <thead class="table-light">
+                    <th>changed property</th>
+                    <th>previous value</th>
+                    <th>updated value</th>
+                    <th>timestamp</th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="tempLog : ${logs}">
+                        <td th:text="${tempLog[0]}"></td>
+                        <td th:text="${tempLog[1]}"></td>
+                        <td th:text="${tempLog[2]}"></td>
+                        <td th:text="${tempLog[3]}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: real_head">
+
+</head>
+
+<body>
+<nav th:replace="fragments :: navbar(${employees}, ${projects})"></nav>
+
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-lg-6 col-xl-4 col-xxl-3">
+            <div class="row">
+                <div class="col mm-25 my-1 card shadow">
+                        <a th:href="@{/tickets/addTicket}"  class="btn btn-dark mt-3 w-100" >
+                            Add Ticket
+                        </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mm-25 my-1 card shadow">
+                        <form  role="search" action="#" th:action="@{/tickets}"
+                               method="POST">
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <input class="form-control me-2" placeholder="Search..." aria-label="Search" th:value="${search}" value="" type="search" name="search"></input>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label" for="start">from:</label>
+                                        <input class="form-control" th:value="${start}" type="date" id="start" name="start">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label" for="end">to:</label>
+                                        <input class="form-control" th:value="${end}" type="date" id="end" name="end">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label col" for="employee">Employee</label>
+                                        <select class="form-control mb-1" id="employee" name="employeeId">
+                                            <option th:value=0 th:text="All" th:selected="${employeeId}==0"></option>
+                                            <option th:value=-1 th:text="Unassigned" th:selected="${employeeId}==-1"></option>
+                                            <option th:each="temp : ${employees}" th:value="${temp.getId()}" th:text="${temp.getLastName()}"
+                                                    th:selected="${temp?.id}==${employeeId}" ></option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="control-label col" for="project">Project</label>
+                                        <select class="form-control mb-1" id="project" name="projectId">
+                                            <option th:value=0 th:text="All" th:selected="${projectId}==0"></option>
+                                            <option th:each="tempP : ${projects}" th:value="${tempP.getId()}" th:text="${tempP.getTitle()}" th:selected="${tempP?.id}==${projectId}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <input name="include_all" th:object="${include_all}" value="exclude" th:checked="${include_all}=='exclude'" class="form-check-input" type="checkbox" role="switch" id="include_all">
+                                        <label  style="width: 170px;" for="include_all">include closed tickets</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <a th:href="@{/tickets}" class="btn btn-outline-danger">Reset</a>
+                                </div>
+                                <div class="col-3">
+                                    <button class="btn btn-outline-dark float-end" type="submit">Search</button>
+                                </div>
+
+                            </div>
+
+                        </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col mm-25 my-1 card shadow">
+                        <h2>Status</h2>
+                        <div>
+                            <canvas id="myChart"></canvas>
+                        </div>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <h2>Priority</h2>
+                        <div id="chart2div">
+                            <canvas id="myChart2"></canvas>
+                        </div>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <h2>Projects</h2>
+                        <div>
+                            <canvas id="myChart4"></canvas>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col mm-25 my-1 card shadow">
+                    <p class="mb-1">number of tickets</p>
+                    <p class=" m-0"><strong style="font-size: 1.5rem;" th:text="${#lists.size(tickets)}"></strong></p>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <p class="mb-1">new in last 7 days</p>
+                        <p class="m-0"><strong style="font-size: 1.5rem;" th:text="${count_new}"></strong></p>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <p class="mb-1">closed in last 7 days</p>
+                        <p class="m-0"><strong style="font-size: 1.5rem;" th:text="${count_closed}"></strong></p>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <p class="mb-1">bugs</p>
+                        <p class=" m-0"><strong style="font-size: 1.5rem;" th:text="${data_type[1]}"></strong></p>
+                </div>
+                <div class="col mm-25 my-1 card shadow">
+                        <p class="mb-1">features</p>
+                        <p class=" m-0"><strong style="font-size: 1.5rem;" th:text="${data_type[0]}"></strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col mm-25 my-1 card shadow"  style="height: 55vh; overflow: auto;">
+
+                <table class="table table-bordered table-striped rounded rounded-3 overflow-hidden mt-2 align-middle" id="ztr">
+                    <thead class="table-dark">
+                    <th>name</th>
+                    <th>status</th>
+                    <th>type</th>
+                    <th>priority</th>
+                    <th>issued at</th>
+                    <th>last update</th>
+                    <th>assigned employee</th>
+                    <th>project</th>
+                    <th>options</th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="tempTicket : ${tickets}">
+                        <td th:text="${tempTicket.getName()}"></td>
+                        <td th:text="${tempTicket.getStatus()}"></td>
+                        <td th:text="${tempTicket.getType()}"></td>
+                        <td th:text="${tempTicket.getPriority()}"></td>
+                        <td th:text="${#dates.format(tempTicket.getCreationTimestamp(), 'dd-MM-yyyy / HH:mm')}"></td>
+                        <td th:text="${#dates.format(tempTicket.getLatestUpdateTimestamp(), 'dd-MM-yyyy / HH:mm')}"></td>
+                        <td th:text="${tempTicket.getEmployee()?.getLastName()}?: 'unassigned'"></td>
+                        <td th:text="${tempTicket.getProject()?.getTitle()}"></td>
+                        <td>
+                            <a th:href="@{/tickets/update(ticketId=${tempTicket.Id})}" class="btn btn-outline-dark">View Ticket</a>
+                            <a th:href="@{/tickets/delete(ticketId=${tempTicket.Id})}" class="btn btn-outline-danger">Delete Ticket</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div>
+    <div id="chartContainer">
+        <script type="text/javascript" th:inline="javascript">
+            let ctx4 = document.getElementById("myChart4").getContext("2d");
+            let myChart4 = new Chart(ctx4, {
+                type: "pie",
+                data:  {
+                    labels: [[${projectMapKeys}]],
+                    datasets: [{
+                        label: 'My First Dataset',
+                        data: [[${projectMapValues}]],
+                        backgroundColor: [
+                            'rgb(0, 63, 92)',
+                            'rgb(0,124,154)',
+                            'rgb(13,151,201)',
+                            'rgb(0,190,184)',
+                            'rgb(33,255,177)'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+            });
+        </script>
+    </div>
+</div>
+
+
+
+    <div th:replace="fragments :: chartscript(${data_status}, ${data_priority}, ${data_type})"></div>
+
+
+</body>
+
+</html>
