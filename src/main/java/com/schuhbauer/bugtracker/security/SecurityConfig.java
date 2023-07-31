@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/static/**").permitAll()
                         .requestMatchers("/tickets/delete").hasRole("MANAGER")
                         .anyRequest().authenticated()
+
+
         )
                 .formLogin(form ->
                         form

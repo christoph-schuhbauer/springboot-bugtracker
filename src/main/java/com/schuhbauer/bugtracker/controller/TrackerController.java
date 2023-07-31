@@ -40,6 +40,7 @@ public class TrackerController {
 
     @GetMapping("/")
     public String showHome(){
+
         return "redirect:/tickets";
     }
 
@@ -318,8 +319,6 @@ public class TrackerController {
         return "projectDetails";
 
     }
-
-
 
 
 }
